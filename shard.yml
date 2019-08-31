@@ -1,0 +1,13 @@
+name: gst
+version: 0.1.0
+
+authors:
+  - lorenzo.barasti <lbarasti@users.noreply.github.com>
+
+targets:
+  gst:
+    main: src/gst.cr
+
+crystal: 0.30.0
+
+license: MIT
