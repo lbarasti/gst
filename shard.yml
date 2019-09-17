@@ -8,6 +8,16 @@ targets:
   gst:
     main: src/gst.cr
 
+dependencies: 
+  kemal: 
+    github: kemalcr/kemal 
+  crest: 
+    github: mamantoha/crest 
+  case_class: 
+    github: lbarasti/case_class 
+  twitter_auth: 
+    github: lbarasti/twitter_auth 
+
 crystal: 0.30.0
 
 license: MIT

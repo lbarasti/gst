@@ -14,6 +14,30 @@ TODO: Write usage instructions here
 
 TODO: Write development instructions here
 
+## Crystal references
+[Process](https://crystal-lang.org/api/0.30.1/Process.html#pid:LibC::PidT-class-method)
+[File](https://crystal-lang.org/api/0.30.1/File.html)
+[HTTP FormData](https://crystal-lang.org/api/0.30.0/HTTP/FormData.html)
+[MIME types](https://crystal-lang.org/api/0.27.1/MIME.html#DEFAULT_TYPES)
+[Kemal](https://github.com/kemalcr/kemal/blob/v0.23.0/src/kemal/config.cr) [custom](https://github.com/kemalcr/kemal/blob/master/src/kemal/helpers/helpers.cr#L17) [handlers](https://github.com/kemalcr/kemal/blob/dcffd7b3f9c89a0847df95319db00912fb194595/spec/exception_handler_spec.cr)
+
+## Ghostscript documentation
+https://www.ghostscript.com/doc/current/VectorDevices.htm
+
+## WebSocket
+On writing [websocket servers](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers)
+[Client-side](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) websockets
+
+## Vue.js
+[Class and style bindings](https://vuejs.org/v2/guide/class-and-style.html)
+[Form validation](https://vuejs.org/v2/cookbook/form-validation.html)
+[Event handling](https://vuejs.org/v2/guide/events.html)
+
+## Other references
+[multipart/form-data](https://www.microfocus.com/documentation/idol/IDOL_12_0/MediaServer/Guides/html/English/Content/Shared_Admin/_ADM_POST_requests.htm)
+[Async form submission](https://pqina.nl/blog/async-form-posts-with-a-couple-lines-of-vanilla-javascript/)
+[curl cheatsheet](https://jvns.ca/images/curl.jpeg)
+
 ## Contributing
 
 1. Fork it (<https://github.com/your-github-user/gst/fork>)
@@ -24,4 +48,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [lorenzo.barasti](https://github.com/your-github-user) - creator and maintainer
+- [lbarasti](https://github.com/lbarasti) - creator and maintainer

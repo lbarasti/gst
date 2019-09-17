@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- <link href="https://fonts.googleapis.com/css?family=Caveat&display=swap" rel="stylesheet"> -->
+    <script src="https://kit.fontawesome.com/1b5e81e58b.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <title>PDF Compressor</title>
+  </head>
+  <body>
+    <header class="header-container">PDF Compressor</header>
+    <div class="content" id="app">
+      <form id="pdf-form" name="pdf-form" action="/submit" method="post" enctype="multipart/form-data">
+        <label class="input-title">
+          1. Pick a PDF
+          <div>
+            <label class="input-button">
+              <input v-on:change="updateFilename" @invalid="handleInvalidFile"
+                      class="invisible" type="file" name="pdf" accept="application/pdf" required/>
+              <div v-if="!filename">
+                <i class="fas fa-file-upload"></i>
+                <span>Browse</span>
+              </div>
+              <div v-else>
+                <i class="fas fa-file-contract"></i>
+                <span class="ellipsis">{{filename}}</span>
+                <span>({{format_bytes(file_size)}})</span>
+              </div>
+            </label>
+          </div>
+        </label>
+        <label class="input-title">
+          2. Pick a resolution
+          <div class="cc-selector">
+            <input checked="checked" id="low-res" type="radio" name="dpi" value="75" />
+            <label v-bind:class="{ bw: isBW }" class="drinkcard-dpi low-res-pic" for="low-res">low</label>
+            <input checked="checked" id="mid-res" type="radio" name="dpi" value="125" />
+            <label v-bind:class="{ bw: isBW }" class="drinkcard-dpi mid-res-pic" for="mid-res">mid</label>
+            <input id="high-res" type="radio" name="dpi" value="175" />
+            <label v-bind:class="{ bw: isBW }" class="drinkcard-dpi high-res-pic" for="high-res">high</label>
+          </div>
+        </label>
+        <label class="input-row">
+          <span class="slider-label-left">Color</span>
+          <div class="switch">
+            <input v-model="isBW" name="bw" type="checkbox" class="invisible">
+            <span class="slider round"></span>
+          </div>
+          <span class="slider-label">B/W</span>
+        </label>
+
+        <label class="input-button">
+          <input v-on:click="clearError" class="invisible" type="submit" value="SUBMIT" />
+          <span class="submit-button">3. Compress!</span>
+        </label>
+      </form>
+      <div v-if="error_message" role="alert" class="alert">
+        <span v-on:click="clearError" class="close-button">&times;</span>
+        {{error_message}}
+      </div>
+      <ul class="jobs-list" v-if="results.length">
+        <li class="job-item" v-for="job in results">
+          <i class="job-icon" v-bind:class="status_to_icon(job.status)"></i>
+          <div class="job-info">
+            <a class="job-info-first-row ellipsis" v-bind:href="job.location" target="_blank">{{job.filename}}</a>
+            <span v-if="job.status !== 'done'" class="job-info-second-row">{{job.status}}</span>
+            <span v-else class="job-info-second-row">
+              compressed {{format_bytes(job.file_size)}} to {{format_bytes(job.compressed_size)}}
+            </span>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
