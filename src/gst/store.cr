@@ -8,4 +8,8 @@ module Store
     end
     return filename
   end
+  def self.size(folder)
+    compressed_disk_space = Dir.children(folder)
+      .reduce(0){ |sum, file| sum + File.info(File.join(folder,file)).size }
+  end
 end

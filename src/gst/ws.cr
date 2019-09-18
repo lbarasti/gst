@@ -34,4 +34,8 @@ module WS
   rescue ArgumentError
     socket.close(WS::InvalidRoute)
   end
+
+  def self.active_sockets
+    Sockets.size
+  end
 end

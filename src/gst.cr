@@ -55,6 +55,16 @@ get "/" do |env|
   send_file env, path, "text/html"
 end
 
+get "/info" do |env|
+  env.response.content_type = "application/json"
+  {
+    "compressed_size": Store.size(COMPRESSED_FOLDER),
+    "uploaded_size": Store.size(UPLOADS_FOLDER),
+    "active_jobs": ActiveJobs.map {|(_,job)| job.to_named_tuple},
+    "active_sockets": WS.active_sockets
+  }.to_json
+end
+
 ws "/:id" do |socket, context|
   id = UUID.new(context.ws_route_lookup.params["id"])
   WS.init(id, socket, ActiveJobs)

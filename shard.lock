@@ -2,15 +2,19 @@ version: 1.0
 shards:
   case_class:
     github: lbarasti/case_class
-    commit: 9a31199049b6748019a2b8681800a7b77394501d
+    version: 0.0.1
 
   crest:
     github: mamantoha/crest
-    version: 0.21.1
+    version: 0.22.0
 
   exception_page:
     github: crystal-loot/exception_page
     version: 0.1.2
+
+  http-client-digest_auth:
+    github: mamantoha/http-client-digest_auth
+    version: 0.2.0
 
   kemal:
     github: kemalcr/kemal
