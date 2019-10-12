@@ -1,7 +1,7 @@
 require "uuid"
 require "./gs"
 
-case_class Job {
+dataclass Job {
   job_id : UUID,
   dpi : Int32,
   color : GS::ColorConversionStrategy,

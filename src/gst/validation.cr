@@ -1,7 +1,7 @@
-case_class FileTooBig{size : UInt64} < Kemal::Exceptions::CustomException
-case_class ParseFailure{exception : Exception} < Kemal::Exceptions::CustomException
-case_class TooManyActiveJobs{active_jobs : Int32} < Kemal::Exceptions::CustomException
-case_class InvalidParameter{param : String, value : String} < Kemal::Exceptions::CustomException
+dataclass FileTooBig{size : UInt64} < Kemal::Exceptions::CustomException
+dataclass ParseFailure{exception : Exception} < Kemal::Exceptions::CustomException
+dataclass TooManyActiveJobs{active_jobs : Int32} < Kemal::Exceptions::CustomException
+dataclass InvalidParameter{param : String, value : String} < Kemal::Exceptions::CustomException
 
 CustomExceptionHandler = ->(env : HTTP::Server::Context, ex : Exception) {
   message = case ex

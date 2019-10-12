@@ -1,5 +1,5 @@
 require "kemal"
-require "case_class"
+require "dataclass"
 require "uuid"
 require "uuid/json"
 require "./gst/store"
