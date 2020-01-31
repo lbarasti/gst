@@ -14,17 +14,17 @@ module Bus
     }
   end
   def self.notify_ready(filename : UUID)
-    spawn ReadyQueue.send(filename)
+    ReadyQueue.send(filename)
+    WS.status_update(filename, JobStatus::Publishing)
     log "Converted #{filename}"
   end
   def self.check_ready() : UUID
     ReadyQueue.receive.tap { |filename|
-      WS.status_update(filename, JobStatus::Publishing)
       log "Publishing job #{filename}"
     }
   end
   def self.notify_failed(filename : UUID)
-    spawn FailedQueue.send(filename)
+    FailedQueue.send(filename)
     WS.status_update(filename, JobStatus::Failed)
     log "Failed #{filename}"
   end
