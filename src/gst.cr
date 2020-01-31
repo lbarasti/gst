@@ -13,7 +13,6 @@ COMPRESSED_FOLDER = Cfg.compressed_folder
 [UPLOADS_FOLDER, COMPRESSED_FOLDER].each { |folder|
   Dir.mkdir(folder) unless Dir.exists?(folder)
 }
-ActiveJobs = {} of UUID => Job
 
 Kemal.config.add_error_handler(400, &CustomExceptionHandler)
 Kemal.config.add_error_handler(503, &CustomExceptionHandler)
@@ -27,9 +26,9 @@ post "/submit" do |env|
   Validate.multipart(env) do |part| # HTTP::FormData::Part
     next("") unless part.name == Validate::FileField
     job_id = UUID.random
-    ActiveJobs[job_id] = Job.new(job_id, dpi: dpi, color: color)
     Store.store_file(job_id, part)
-    Bus.enqueue(job_id)
+    job = Job.new(job_id, dpi: dpi, color: color)
+    Bus.enqueue(job)
     env.response.status_code = 201
     {"job_id": job_id, "status": JobStatus::Uploaded.to_s}.to_json
   end
@@ -57,21 +56,21 @@ get "/info" do |env|
   {
     "compressed_size": Store.size(COMPRESSED_FOLDER),
     "uploaded_size": Store.size(UPLOADS_FOLDER),
-    "active_jobs": ActiveJobs.map {|(_,job)| job.to_named_tuple},
+    "active_jobs": [] of String, # TODO: get active jobs by scanning COMPRESSED_FOLDER for *.part files
     "active_sockets": WS.active_sockets
   }.to_json
 end
 
 ws "/:id" do |socket, context|
   id = UUID.new(context.ws_route_lookup.params["id"])
-  WS.init(id, socket, ActiveJobs)
+  WS.init(id, socket)
 end
 
 # Compressor task
 WORKERS.times do |worker_id|
   spawn do
     loop do
-      Compressor.run(UPLOADS_FOLDER, COMPRESSED_FOLDER, ActiveJobs)
+      Compressor.run(UPLOADS_FOLDER, COMPRESSED_FOLDER)
     end
   end
 end

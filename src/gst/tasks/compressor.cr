@@ -6,11 +6,9 @@ module Compressor
     -dGrayImageResolution=#{dpi} -dColorImageResolution=#{dpi} \
     -sOutputFile=#{target}.part #{source}"
   end
-  def self.run(source_folder, target_folder, active_jobs)
-    filename = Bus.dequeue()
-    dpi = active_jobs[filename].dpi
-    color = active_jobs[filename].color
-    active_jobs[filename] = active_jobs[filename].copy(status: JobStatus::Compressing)
+  def self.run(source_folder, target_folder)
+    filename, dpi, color, _, _ = Bus.dequeue().to_tuple
+    # TODO: update status to JobStatus::Compressing
 
     stdout = cmd(color,
       dpi,
@@ -23,6 +21,6 @@ module Compressor
     else
       Bus.notify_failed(filename)
     end
-    active_jobs.delete(filename)
+    # TODO: update status to JobStatus::Compressed
   end
 end

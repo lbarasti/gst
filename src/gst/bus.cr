@@ -1,16 +1,16 @@
 require "uuid"
 
 module Bus
-  JobQueue = Channel(UUID).new
+  JobQueue = Channel(Job).new
   ReadyQueue = Channel(UUID).new
   FailedQueue = Channel(UUID).new
-  def self.enqueue(filename : UUID)
-    spawn JobQueue.send(filename)
+  def self.enqueue(job : Job)
+    JobQueue.send(job)
   end
-  def self.dequeue() : UUID
-    JobQueue.receive.tap { |filename|
-      WS.status_update(filename, JobStatus::Compressing)
-      log "Processing job #{filename}"
+  def self.dequeue() : Job
+    JobQueue.receive.tap { |job|
+      WS.status_update(job.job_id, JobStatus::Compressing)
+      log "Processing job #{job.job_id}"
     }
   end
   def self.notify_ready(filename : UUID)

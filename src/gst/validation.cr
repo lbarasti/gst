@@ -41,10 +41,11 @@ module Validate
   # raise an exception if there are too many jobs running
   CurrentLoad = -> (env : HTTP::Server::Context) {
     env.response.content_type = "application/json"
-    log "active-jobs: #{ActiveJobs.size}"
-    if ActiveJobs.size >= MaxActiveJobs
+    active_jobs = 0 # TODO: estimate number of active jobs
+    log "active-jobs: #{active_jobs}"
+    if active_jobs >= MaxActiveJobs
       env.response.status_code = 503
-      raise TooManyActiveJobs.new(ActiveJobs.size)
+      raise TooManyActiveJobs.new(active_jobs)
     end
   }
 

@@ -17,19 +17,16 @@ module WS
     end
   end
 
-  def self.init(id : UUID, socket : HTTP::WebSocket, active_jobs : Hash(UUID,Job))
+  def self.init(id : UUID, socket : HTTP::WebSocket)
     if Sockets.size >= WS::MaxConnections
       socket.send(WS::TooManyConnections)
       socket.close()
-    elsif active_jobs[id]? && active_jobs[id].status.active?
+    else
       Sockets[id] = socket
       socket.on_close { |msg|
         log "#{id}: socket closed"
         Sockets.delete(id)
       }
-      Bus.notify_client(id, active_jobs[id].status)
-    else
-      socket.close(WS::InvalidRoute)
     end
   rescue ArgumentError
     socket.close(WS::InvalidRoute)
