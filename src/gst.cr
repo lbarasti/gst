@@ -5,12 +5,13 @@ require "uuid/json"
 require "./gst/*"
 require "./gst/tasks/*"
 
-Cfg = Config.load
-WORKERS = Cfg.workers # TODO: read from config
-DOCUMENT_TTL = Cfg.document_ttl.seconds # TODO: read from config
-UPLOADS_FOLDER = Cfg.uploaded_folder
-COMPRESSED_FOLDER = Cfg.compressed_folder
-[UPLOADS_FOLDER, COMPRESSED_FOLDER].each { |folder|
+cfg = Config.load
+workers = cfg.workers # TODO: read from config
+document_ttl = cfg.document_ttl.seconds # TODO: read from config
+uploaded_folder = cfg.uploaded_folder
+compressed_folder = cfg.compressed_folder
+
+[uploaded_folder, compressed_folder].each { |folder|
   Dir.mkdir(folder) unless Dir.exists?(folder)
 }
 
@@ -26,7 +27,8 @@ post "/submit" do |env|
   Validate.multipart(env) do |part| # HTTP::FormData::Part
     next("") unless part.name == Validate::FileField
     job_id = UUID.random
-    Store.store_file(job_id, part)
+    file_path = ::File.join [uploaded_folder, job_id]
+    Store.store_file(file_path, part)
     job = Job.new(job_id, dpi: dpi, color: color)
     Bus.enqueue(job)
     env.response.status_code = 201
@@ -36,7 +38,7 @@ end
 
 get "/compressed/:filename" do |env|
   filename = env.params.url["filename"]
-  path = ::File.join [COMPRESSED_FOLDER, "#{filename}.pdf"]
+  path = ::File.join [compressed_folder, "#{filename}.pdf"]
   if File.exists?(path)
     send_file env, path, "application/pdf"
   else
@@ -54,9 +56,9 @@ end
 get "/info" do |env|
   env.response.content_type = "application/json"
   {
-    "compressed_size": Store.size(COMPRESSED_FOLDER),
-    "uploaded_size": Store.size(UPLOADS_FOLDER),
-    "active_jobs": [] of String, # TODO: get active jobs by scanning COMPRESSED_FOLDER for *.part files
+    "compressed_size": Store.size(compressed_folder),
+    "uploaded_size": Store.size(uploaded_folder),
+    "active_jobs": [] of String, # TODO: get active jobs by scanning compressed_folder for *.part files
     "active_sockets": WS.active_sockets
   }.to_json
 end
@@ -67,10 +69,10 @@ ws "/:id" do |socket, context|
 end
 
 # Compressor task
-WORKERS.times do |worker_id|
+workers.times do |worker_id|
   spawn do
     loop do
-      Compressor.run(UPLOADS_FOLDER, COMPRESSED_FOLDER)
+      Compressor.run(uploaded_folder, compressed_folder)
     end
   end
 end
@@ -78,9 +80,9 @@ end
 # Cleaner task
 spawn do
   loop do
-    sleep DOCUMENT_TTL/2
-    [UPLOADS_FOLDER, COMPRESSED_FOLDER].each { |folder|
-      Cleaner.run(folder, DOCUMENT_TTL)
+    sleep document_ttl/2
+    [uploaded_folder, compressed_folder].each { |folder|
+      Cleaner.run(folder, document_ttl)
     }
   end
 end
@@ -88,7 +90,7 @@ end
 # Publisher task
 spawn do
   loop do
-    Publisher.run(COMPRESSED_FOLDER)
+    Publisher.run(compressed_folder)
   end
 end
 
