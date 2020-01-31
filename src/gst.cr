@@ -2,20 +2,17 @@ require "kemal"
 require "dataclass"
 require "uuid"
 require "uuid/json"
-require "./gst/store"
-require "./gst/validation"
-require "./gst/bus"
-require "./gst/ws"
-require "./gst/gs"
-require "./gst/job"
-require "./gst/tasks/cleaner"
-require "./gst/tasks/compressor"
-require "./gst/tasks/publisher"
+require "./gst/*"
+require "./gst/tasks/*"
 
-WORKERS = 2 # TODO: read from config
-DOCUMENT_TTL = 60.seconds # TODO: read from config
-UPLOADS_FOLDER = ::File.join [Kemal.config.public_folder, "uploads/"]
-COMPRESSED_FOLDER = ::File.join [Kemal.config.public_folder, "compressed/"]
+Cfg = Config.load
+WORKERS = Cfg.workers # TODO: read from config
+DOCUMENT_TTL = Cfg.document_ttl.seconds # TODO: read from config
+UPLOADS_FOLDER = Cfg.uploaded_folder
+COMPRESSED_FOLDER = Cfg.compressed_folder
+[UPLOADS_FOLDER, COMPRESSED_FOLDER].each { |folder|
+  Dir.mkdir(folder) unless Dir.exists?(folder)
+}
 ActiveJobs = {} of UUID => Job
 
 Kemal.config.add_error_handler(400, &CustomExceptionHandler)

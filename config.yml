@@ -1,0 +1,4 @@
+workers: 2
+document_ttl: 60 # seconds
+uploaded_folder: ./public/uploaded/ 
+compressed_folder: ./public/compressed/
