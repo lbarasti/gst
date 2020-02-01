@@ -1,17 +1,19 @@
 require "uuid"
+require "./concurrent_hash"
 
 module WS
-  Sockets = {} of UUID => HTTP::WebSocket
+  Sockets = ConcurrentHash(UUID, HTTP::WebSocket).new
   InvalidRoute = {"error": "invalid route"}.to_json
   TooManyConnections = {"error": "too many open connections"}.to_json
   MaxConnections = 20 # TODO: read from config
 
   def self.status_update(job_id : UUID, status : JobStatus, bytes : UInt64 | Nil = nil)
-    if Sockets[job_id]?
-      Sockets[job_id].send(
+    socket = Sockets[job_id]?
+    unless socket.nil?
+      socket.send(
         {"job_id": job_id, "status": status.to_s.downcase, "bytes": bytes}.to_json)
       if !status.active?
-        Sockets[job_id].close()
+        socket.close()
         Sockets.delete(job_id)
       end
     end
