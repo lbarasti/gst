@@ -8,4 +8,7 @@ module Store
     compressed_disk_space = Dir.children(folder)
       .reduce(0){ |sum, file| sum + File.info(File.join(folder,file)).size }
   end
+  def self.active_jobs(folder)
+    Dir.glob(folder + "/*.part")
+  end
 end

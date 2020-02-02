@@ -24,9 +24,9 @@ CustomExceptionHandler = ->(env : HTTP::Server::Context, ex : Exception) {
 module Validate
   BytesInMb = 1048576_u64 # 2 ^ 20
   BytesInKb = 1024_u64 # 2 ^ 10
-  BytesMax = 7_u64 * BytesInMb # 7MB
+  BytesMax = Config.load.max_file_size_mb * BytesInMb
   FileField = "pdf"
-  MaxActiveJobs = 4 # TODO: read from config
+  MaxActiveJobs = Config.load.max_active_jobs
 
   ContentLength = -> (env : HTTP::Server::Context) {
     content_length = env.request.content_length.as(UInt64)
@@ -41,7 +41,7 @@ module Validate
   # raise an exception if there are too many jobs running
   CurrentLoad = -> (env : HTTP::Server::Context) {
     env.response.content_type = "application/json"
-    active_jobs = 0 # TODO: estimate number of active jobs
+    active_jobs = Store.active_jobs(Config.load.compressed_folder).size
     log "active-jobs: #{active_jobs}"
     if active_jobs >= MaxActiveJobs
       env.response.status_code = 503

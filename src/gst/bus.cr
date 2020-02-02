@@ -32,7 +32,4 @@ module Bus
     WS.status_update(filename, JobStatus::Done, file_size)
     log "Finished job #{filename}"
   end
-  def self.notify_client(filename : UUID, job_status : JobStatus)
-    WS.status_update(filename, job_status)
-  end
 end

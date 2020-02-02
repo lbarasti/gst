@@ -6,8 +6,8 @@ require "./gst/*"
 require "./gst/tasks/*"
 
 cfg = Config.load
-workers = cfg.workers # TODO: read from config
-document_ttl = cfg.document_ttl.seconds # TODO: read from config
+workers = cfg.workers
+document_ttl = cfg.document_ttl.seconds
 uploaded_folder = cfg.uploaded_folder
 compressed_folder = cfg.compressed_folder
 
@@ -58,7 +58,7 @@ get "/info" do |env|
   {
     "compressed_size": Store.size(compressed_folder),
     "uploaded_size": Store.size(uploaded_folder),
-    "active_jobs": [] of String, # TODO: get active jobs by scanning compressed_folder for *.part files
+    "active_jobs": Store.active_jobs(compressed_folder),
     "active_sockets": WS.active_sockets
   }.to_json
 end

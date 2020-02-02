@@ -8,19 +8,22 @@ module Compressor
   end
   def self.run(source_folder, target_folder)
     filename, dpi, color, _, _ = Bus.dequeue().to_tuple
-    # TODO: update status to JobStatus::Compressing
 
-    stdout = cmd(color,
+    compress_cmd = cmd(color,
       dpi,
       ::File.join(source_folder, filename.to_s),
       ::File.join(target_folder, filename.to_s)
-    ).tap{ |cmd_| `#{cmd_}` } # TODO: switch to Process
-    log "exit_status: #{$?.exit_code}"
-    if $?.normal_exit?
+    )
+    compression_status = Process.new(compress_cmd, shell: true).wait
+
+    log "exit_status: #{compression_status}"
+
+    if compression_status.normal_exit?
       Bus.notify_ready(filename)
     else
       Bus.notify_failed(filename)
     end
-    # TODO: update status to JobStatus::Compressed
+  rescue
+    Bus.notify_failed(filename) unless filename.nil?
   end
 end
