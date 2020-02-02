@@ -13,6 +13,9 @@ dependencies:
     github: kemalcr/kemal
   dataclass:
     github: lbarasti/dataclass
-crystal: 0.31.1
+  diagnostic_logger:
+    github: lbarasti/diagnostic_logger
+
+crystal: 0.32.1
 
 license: MIT

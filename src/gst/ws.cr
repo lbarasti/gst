@@ -1,7 +1,10 @@
 require "uuid"
+require "diagnostic_logger"
 require "./concurrent_hash"
 
 module WS
+  @@logger = DiagnosticLogger.new({{@type.stringify}})
+
   Sockets = ConcurrentHash(UUID, HTTP::WebSocket).new
   InvalidRoute = {"error": "invalid route"}.to_json
   TooManyConnections = {"error": "too many open connections"}.to_json
@@ -26,7 +29,7 @@ module WS
     else
       Sockets[id] = socket
       socket.on_close { |msg|
-        log "#{id}: socket closed"
+        @@logger.info "#{id}: socket closed"
         Sockets.delete(id)
       }
     end

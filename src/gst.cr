@@ -15,6 +15,7 @@ compressed_folder = cfg.compressed_folder
   Dir.mkdir(folder) unless Dir.exists?(folder)
 }
 
+Kemal.config.logger = DiagnosticLoggerHandler.new
 Kemal.config.add_error_handler(400, &CustomExceptionHandler)
 Kemal.config.add_error_handler(503, &CustomExceptionHandler)
 
@@ -70,7 +71,7 @@ end
 
 # Compressor task
 workers.times do |worker_id|
-  spawn do
+  spawn(name: "compressor_#{worker_id}") do
     loop do
       Compressor.run(uploaded_folder, compressed_folder)
     end
@@ -78,7 +79,7 @@ workers.times do |worker_id|
 end
 
 # Cleaner task
-spawn do
+spawn(name: "cleaner") do
   loop do
     sleep document_ttl/2
     [uploaded_folder, compressed_folder].each { |folder|
@@ -88,7 +89,7 @@ spawn do
 end
 
 # Publisher task
-spawn do
+spawn(name: "publisher") do
   loop do
     Publisher.run(compressed_folder)
   end

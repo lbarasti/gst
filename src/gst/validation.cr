@@ -1,3 +1,5 @@
+require "diagnostic_logger"
+
 dataclass FileTooBig{size : UInt64} < Kemal::Exceptions::CustomException
 dataclass ParseFailure{exception : Exception} < Kemal::Exceptions::CustomException
 dataclass TooManyActiveJobs{active_jobs : Int32} < Kemal::Exceptions::CustomException
@@ -22,6 +24,8 @@ CustomExceptionHandler = ->(env : HTTP::Server::Context, ex : Exception) {
 }
 
 module Validate
+  @@logger = DiagnosticLogger.new({{@type.stringify}})
+
   BytesInMb = 1048576_u64 # 2 ^ 20
   BytesInKb = 1024_u64 # 2 ^ 10
   BytesMax = Config.load.max_file_size_mb * BytesInMb
@@ -30,7 +34,7 @@ module Validate
 
   ContentLength = -> (env : HTTP::Server::Context) {
     content_length = env.request.content_length.as(UInt64)
-    log "content-length: #{content_length / BytesInKb}KB pdf"
+    @@logger.info "content-length: #{content_length / BytesInKb}KB pdf"
     env.response.content_type = "application/json"
     if content_length > BytesMax
       env.response.status_code = 400
@@ -42,7 +46,7 @@ module Validate
   CurrentLoad = -> (env : HTTP::Server::Context) {
     env.response.content_type = "application/json"
     active_jobs = Store.active_jobs(Config.load.compressed_folder).size
-    log "active-jobs: #{active_jobs}"
+    @@logger.info "active-jobs: #{active_jobs}"
     if active_jobs >= MaxActiveJobs
       env.response.status_code = 503
       raise TooManyActiveJobs.new(active_jobs)

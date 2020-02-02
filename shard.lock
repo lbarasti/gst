@@ -2,7 +2,11 @@ version: 1.0
 shards:
   dataclass:
     github: lbarasti/dataclass
-    version: 0.0.2
+    version: 1.1.0
+
+  diagnostic_logger:
+    github: lbarasti/diagnostic_logger
+    version: 1.0.0
 
   exception_page:
     github: crystal-loot/exception_page
@@ -10,7 +14,7 @@ shards:
 
   kemal:
     github: kemalcr/kemal
-    version: 0.26.0
+    version: 0.26.1
 
   kilt:
     github: jeromegn/kilt

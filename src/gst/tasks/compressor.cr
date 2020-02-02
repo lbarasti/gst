@@ -1,4 +1,8 @@
+require "diagnostic_logger"
+
 module Compressor
+  @@logger = DiagnosticLogger.new({{@type.stringify}})
+
   private def self.cmd(color, dpi, source, target)
     "gs -dNOPAUSE -dBATCH -sDEVICE=pdfwrite \
     -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook \
@@ -16,7 +20,7 @@ module Compressor
     )
     compression_status = Process.new(compress_cmd, shell: true).wait
 
-    log "exit_status: #{compression_status}"
+    @@logger.info "exit_status: #{compression_status.to_s}"
 
     if compression_status.normal_exit?
       Bus.notify_ready(filename)

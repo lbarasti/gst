@@ -1,8 +1,12 @@
+require "diagnostic_logger"
+
 # Deletes files that passed their time-to-live
 module Cleaner
+  @@logger = DiagnosticLogger.new({{@type.stringify}})
+
   def self.run(folder, ttl)
     threshold = Time.utc - ttl
-    log "Deleting files in #{folder} created before #{threshold}"
+    @@logger.info "Deleting files in #{folder} created before #{threshold}"
     Dir.entries(folder)
       .reject(&.starts_with?("."))
       .map { |filename| ::File.join(folder, filename) }
@@ -14,7 +18,7 @@ module Cleaner
         modified < threshold
       }
       .each { |file_path, _|
-        log "Deleting #{file_path}"
+        @@logger.info "Deleting #{file_path}"
         File.delete(file_path)
       }
   end
