@@ -3,7 +3,7 @@ document_ttl: 60 # seconds
 uploaded_folder: ./public/uploaded/ 
 compressed_folder: ./public/compressed/
 max_active_jobs: 4
-max_file_size_mb: 9
+max_file_size_mb: 100
 max_ws_connections: 20
 
 logger:
