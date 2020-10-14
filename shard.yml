@@ -11,10 +11,14 @@ targets:
 dependencies: 
   kemal: 
     github: kemalcr/kemal
+    branch: master
   dataclass:
     github: lbarasti/dataclass
   diagnostic_logger:
     github: lbarasti/diagnostic_logger
+    branch: master
+  agent:
+    github: lbarasti/agent
 
 crystal: 0.34.0
 

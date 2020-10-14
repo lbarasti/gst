@@ -1,26 +1,30 @@
-version: 1.0
+version: 2.0
 shards:
+  agent:
+    git: https://github.com/lbarasti/agent.git
+    version: 0.1.0+git.commit.8122db4055262f998671ca417edc6347793ffad9
+
   dataclass:
-    github: lbarasti/dataclass
+    git: https://github.com/lbarasti/dataclass.git
     version: 1.1.0
 
   diagnostic_logger:
-    github: lbarasti/diagnostic_logger
-    version: 1.0.1
+    git: https://github.com/lbarasti/diagnostic_logger.git
+    version: 2.0.0+git.commit.31aa01d8760a1e522e208b817088c75bb4567563
 
   exception_page:
-    github: crystal-loot/exception_page
+    git: https://github.com/crystal-loot/exception_page.git
     version: 0.1.4
 
   kemal:
-    github: kemalcr/kemal
-    version: 0.26.1
+    git: https://github.com/kemalcr/kemal.git
+    version: 0.26.1+git.commit.a819d4792bbc63d993d6dd2b15f9af5efb0c2d8c
 
   kilt:
-    github: jeromegn/kilt
+    git: https://github.com/jeromegn/kilt.git
     version: 0.4.0
 
   radix:
-    github: luislavena/radix
+    git: https://github.com/luislavena/radix.git
     version: 0.3.9
 

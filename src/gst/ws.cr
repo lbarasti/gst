@@ -34,7 +34,7 @@ module WS
       }
     end
   rescue ArgumentError
-    socket.close(WS::InvalidRoute)
+    socket.close(HTTP::WebSocket::CloseCode::ProtocolError, WS::InvalidRoute)
   end
 
   def self.active_sockets
