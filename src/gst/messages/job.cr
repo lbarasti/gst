@@ -1,5 +1,5 @@
 require "uuid"
-require "./gs"
+require "../gs"
 
 dataclass Job {
   job_id : UUID,

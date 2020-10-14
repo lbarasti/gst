@@ -1,11 +1,13 @@
 require "uuid"
 require "diagnostic_logger"
+require "./messages/*"
 
 module Bus
   @@logger = DiagnosticLogger.new({{@type.stringify}})
   JobQueue = Channel(Job).new
   ReadyQueue = Channel(UUID).new
   FailedQueue = Channel(UUID).new
+  MetricsQueue = Channel(Heartbeat).new
   def self.enqueue(job : Job)
     JobQueue.send(job)
   end
@@ -33,5 +35,11 @@ module Bus
   def self.notify_published(filename : UUID, file_size)
     WS.status_update(filename, JobStatus::Done, file_size)
     @@logger.info "Finished job #{filename}"
+  end
+  def self.receive_metric
+    MetricsQueue.receive
+  end
+  def self.heartbeat
+    MetricsQueue.send Heartbeat.new
   end
 end

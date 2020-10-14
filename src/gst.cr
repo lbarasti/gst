@@ -4,6 +4,7 @@ require "crometheus"
 require "uuid"
 require "uuid/json"
 require "./gst/*"
+require "./gst/messages/*"
 require "./gst/tasks/*"
 
 cfg = Config.load
@@ -80,6 +81,7 @@ workers.times do |worker_id|
   spawn(name: "compressor_#{worker_id}") do
     loop do
       Compressor.run(uploaded_folder, compressed_folder)
+      Bus.heartbeat
     end
   end
 end
@@ -91,6 +93,7 @@ spawn(name: "cleaner") do
     [uploaded_folder, compressed_folder].each { |folder|
       Cleaner.run(folder, document_ttl)
     }
+    Bus.heartbeat
   end
 end
 
@@ -98,6 +101,13 @@ end
 spawn(name: "publisher") do
   loop do
     Publisher.run(compressed_folder)
+    Bus.heartbeat
+  end
+end
+
+spawn(name: "metrics_reporter") do
+  loop do
+    MetricsReporter.run
   end
 end
 
