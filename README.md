@@ -11,8 +11,10 @@ TODO: Write installation instructions here
 TODO: Write usage instructions here
 
 ## Development
-
-TODO: Write development instructions here
+To run Prometheus locally:
+```
+docker run --rm --name prometheus --network host -d -v /home/lbarasti/crystal/prometheus.yml:/etc/prometheus/prometheus.yml -p 127.0.0.1:9090:9090 prom/prometheus --config.file=/etc/prometheus/prometheus.yml
+```
 
 ## Crystal references
 [Process](https://crystal-lang.org/api/0.30.1/Process.html#pid:LibC::PidT-class-method)

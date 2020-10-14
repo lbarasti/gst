@@ -4,6 +4,10 @@ shards:
     git: https://github.com/lbarasti/agent.git
     version: 0.1.0+git.commit.8122db4055262f998671ca417edc6347793ffad9
 
+  crometheus:
+    git: https://github.com/darwinnn/crometheus.git
+    version: 0.3.0+git.commit.922227e7c88027eb2cb4876399c9f0373e8d6f76
+
   dataclass:
     git: https://github.com/lbarasti/dataclass.git
     version: 1.1.0

@@ -1,5 +1,6 @@
 require "kemal"
 require "dataclass"
+require "crometheus"
 require "uuid"
 require "uuid/json"
 require "./gst/*"
@@ -14,6 +15,11 @@ compressed_folder = cfg.compressed_folder
 [uploaded_folder, compressed_folder].each { |folder|
   Dir.mkdir(folder) unless Dir.exists?(folder)
 }
+
+metrics_handler = Crometheus.default_registry.get_handler
+Crometheus.default_registry.path = "/metrics"
+
+add_handler metrics_handler
 
 Kemal.config.logger = DiagnosticLoggerHandler.new
 Kemal.config.add_error_handler(400, &CustomExceptionHandler)
